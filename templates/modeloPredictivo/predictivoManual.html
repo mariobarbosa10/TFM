@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{%  block titulo_pag %} <h4> Modelo Predictivo Manual </h4> {%  endblock titulo_pag %}
+
+{% block head %} 
+ 
+
+{% endblock head %}
+
+{% block content %}
+ 
+ <body>
+   <hr> 
+        <div class="form-group"> 
+         <textarea class="form-control" rows="5" id="asunto" placeholder="Ingrese el texto de la petición"></textarea> 
+        </div>   
+           <button type="button" class="btn btn-primary" onclick="predecir()" >
+               <span class="icon text-white-50"><i class="fas fa-check"></i></span> Predecir </button>  
+           <button type="button" onclick="limpiarPredecir()" class="btn btn-warning">
+               <span class="icon text-white-50"><i class="fas fa-trash"></i></span> Limpiar </button>  
+        <hr>   
+     	 <div class="card shadow mb-4"> 
+            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Resultado</h6></div>
+            <div class="card-body" id="Resultado">
+                 
+            </div>
+         </div>       
+ </body>  
+
+{% endblock %}
+
+{% block scripts %} 
+<script src="{% static "js/comunes.js" %}"></script> 
+<script src="{% static "js/predecir.js" %}"></script> 
+{% endblock %}

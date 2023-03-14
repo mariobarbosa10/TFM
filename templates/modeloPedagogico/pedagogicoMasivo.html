@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block head %} 
+
+ <!-- Custom styles for this page -->
+    <link href="{%  static 'base/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+
+{% endblock head %}
+
+{%  block titulo_pag %} <h4> Modelo Pedagógico Masivo </h4> {%  endblock titulo_pag %}
+ 
+{% block content %}
+  
+ <hr>
+<form action="{% url "modeloPedagogico:pedagogicoMasivo" %}" method="post" enctype="multipart/form-data" id="formMasivo">
+  {% csrf_token %}      
+  <div class="form-group">
+    <label for="exampleInputEmail1">Archivo</label>
+     <br> 
+    <div class="custom-file" style="height: 30px; width: 500px;">   
+      <input type="file" name="excel_file" class="custom-file-input" lang="es" id="customFile" required="required"> <label class="custom-file-label" data-browse="Elegir" for="customFileLang">Ningun archivo seleccionado</label> 
+    </div>
+    <a download="Pedagogico_masivo" href="{%  static 'estructuras/pedagogicoMasivo.xlsx' %}">
+              <h6>Descargar archivo ejemplo</h6></a>
+  </div>
+  <br>
+  <button type="button"  onclick="ejecutarMasivo()" class="btn btn-primary">
+    <span class="icon text-white-50"><i class="fas fa-check"></i></span> Cargar </button>  
+  <button type="button" onclick="LimpiarMasivo()" class="btn btn-warning">
+    <span class="icon text-white-50"><i class="fas fa-trash"></i></span> Limpiar </button>  
+</form> 
+<hr> 
+  
+ <div id="tabla">  
+   {% if error %} 
+         <div class="alert alert-warning" role="alert" >{{ error }}</div>
+   {% elif excel_data%} 
+    
+          <div class="panel panel-default">
+                  <div class="panel-heading">
+                      <h3 class="panel-title">Resultado</h3> 
+                  </div>
+                  <div class="panel-body panel-body-table"> 
+
+                      <table class="table table-striped table-hover" lang="es">
+                            <thead>
+                                 <th>INFORMACIÓN DEL ASUNTO</th> 
+                                 <th class="all">ACCIONES</th>
+                            </thead>
+                            <tbody> 
+                               {% for row in excel_data %}
+                                  {% for cell in row %}
+                                    <tr> 
+                                       <form action="{% url 'modeloPedagogico:pedagogicoManual' %}" method="post" enctype="multipart/form-data">
+                                                {% csrf_token %} 
+                                          <td width="90%">{{ cell }}</td>
+                                          <td width="10%"> 
+                                             <input id="asunto" name="asunto" type="hidden" value="{{ cell }}">
+                                             <button type="submit" class="btn btn-warning btn-circle" title="Analizar"><i class="far fa-edit"></i></button>  
+                                          </td>
+                                      </form>
+                                     </tr>
+                                  {% endfor %} 
+                                {% endfor %}  
+                            </tbody>
+                        </table>  
+                 </div>
+          </div>   
+{% endif %}
+ </div>
+
+{% endblock %}
+
+ {% block scripts %}
+<!-- Page level plugins -->
+  <script src="{% static 'base/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<script>
+  $(document).ready(function(){
+    $('.table').DataTable({
+      language: {
+            "decimal": "",
+            "emptyTable": "No hay información",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+            "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+            "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ Entradas",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "Sin resultados encontrados",
+            "paginate": {
+                "first": "Primero",
+                "last": "Ultimo",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        }, 
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]] 
+    });
+ 
+    $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName); 
+    });
+
+  });
+</script> 
+<script src="{% static 'js/comunes.js' %}"></script>
+<script src="{% static 'js/pedagogico.js' %}"></script>
+
+ {% endblock %}
